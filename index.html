@@ -436,6 +436,17 @@
                         body: formData
                     });
 
+                    // Check if response is OK
+                    if (!response.ok) {
+                        throw new Error(`API returned ${response.status}: ${response.statusText}`);
+                    }
+
+                    // Check if response is JSON
+                    const contentType = response.headers.get('content-type');
+                    if (!contentType || !contentType.includes('application/json')) {
+                        throw new Error('API is not responding correctly. It may be starting up...');
+                    }
+
                     const data = await response.json();
 
                     if (data.success) {
@@ -443,11 +454,19 @@
                         updateFPS();
                     } else {
                         addLog('❌ Detection failed: ' + (data.error || 'Unknown error'));
+                        updateStatus('Detection failed', true);
                     }
                 } catch (error) {
                     console.error('Detection error:', error);
-                    addLog('❌ API Error: ' + error.message);
-                    updateStatus('API connection error!', true);
+                    document.getElementById('loadingMsg').style.display = 'none';
+                    
+                    if (error.message.includes('starting up')) {
+                        addLog('⏳ API is starting up. Please wait 30 seconds and try again.');
+                        updateStatus('API is warming up...', true);
+                    } else {
+                        addLog('❌ API Error: ' + error.message);
+                        updateStatus('API connection error!', true);
+                    }
                 }
             }, 'image/jpeg', 0.95);
         }
