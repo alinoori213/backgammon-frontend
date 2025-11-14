@@ -341,7 +341,7 @@
         let frameCount = 0;
         let lastTime = Date.now();
 
-        const API_URL = 'https://192.168.100.40:5000/detect';
+        const API_URL = 'https://backgammon-api-ali.onrender.com/detect';
 
         function updateStatus(message, isError = false) {
             document.getElementById('statusText').textContent = message;
@@ -529,7 +529,7 @@
         // Check API health on load
         window.onload = async () => {
             try {
-                const response = await fetch('https://192.168.100.40:5000/health');
+                const response = await fetch('https://backgammon-api-ali.onrender.com/health');
                 const data = await response.json();
                 if (data.status === 'ok') {
                     addLog('✅ Connected to YOLO API server');
